@@ -9,7 +9,9 @@
 namespace Simon\Safe;
 
 
-class SafeServiceProvider
+use Illuminate\Support\ServiceProvider;
+
+class SafeServiceProvider extends ServiceProvider
 {
 
     public function boot()
