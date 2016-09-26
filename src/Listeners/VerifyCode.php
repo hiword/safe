@@ -8,7 +8,10 @@
  */
 namespace Simon\Safe\Listeners;
 
-class VerifyCode implements SplObserver
+use Simon\Safe\Contracts\ObserverInterface;
+use Simon\Safe\Contracts\SubjectInterface;
+
+class VerifyCode implements ObserverInterface
 {
     protected $request = null;
 
@@ -17,9 +20,19 @@ class VerifyCode implements SplObserver
         $this->request = $request;
     }
 
-    public function update(SplSubject $subject)
+    public function handle(SubjectInterface $subject)
     {
-        // TODO: Implement update() method.
+        // TODO: Implement handle() method.
+
+        if ($this->request->method() === 'POST')
+        {
+            return 'POST';
+        }
+        else
+        {
+            return 'GET';
+        }
+
     }
 
 

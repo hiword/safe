@@ -9,10 +9,12 @@
 namespace Simon\Safe;
 
 
+use Simon\Safe\Contracts\ObserverInterface;
+use Simon\Safe\Contracts\SubjectInterface;
 use SplObserver;
 use Illuminate\Contracts\Cache\Repository as Cache;
 
-class Container implements \SplSubject
+class Container implements SubjectInterface
 {
 
     protected $observers = [];
@@ -24,7 +26,7 @@ class Container implements \SplSubject
         $this->cache = $cache;
     }
 
-    protected function getObserverClass(SplObserver $observer)
+    protected function getObserverClass(ObserverInterface $observer)
     {
         return get_class($observer);
     }
@@ -32,34 +34,50 @@ class Container implements \SplSubject
     //你可以一个一个传，我都会记下来，但当你成功后必须要手动detach
     //notify是要有参数的，就是observer
 
-    public function attach(SplObserver $observer)
+    public function attach(ObserverInterface $observer)
     {
         // TODO: Implement attach() method.
 
         $class = $this->getObserverClass($observer);
 
-        $observer = [
-            'frequency'=>1,
-            'object'=>$observer,
-        ];
+        if ($this->cache->has($class))
+        {
+            $cache = $this->cache->get($class);
+            $cache['frequency'] = $cache['frequency']+1;
+        }
+        else
+        {
+            $cache = [
+                'frequency'=>1,
+                'object'=>$observer,
+            ];
+        }
+
+        $this->cache->forever($class,$cache);
+    }
+
+    public function detach(ObserverInterface $observer)
+    {
+        // TODO: Implement detach() method.
+        $class = $this->getObserverClass($observer);
 
         if ($this->cache->has($class))
         {
-            $observer['frequency'] = $this->cache->get($class.'.frequency')+1;
+            $this->cache->forget($class);
         }
-
-
-        $this->cache->put('abc',[]);
     }
 
-    public function detach(SplObserver $observer)
-    {
-        // TODO: Implement detach() method.
-    }
-
-    public function notify()
+    public function notify(ObserverInterface $observer)
     {
         // TODO: Implement notify() method.
+        $class = $this->getObserverClass($observer);
+
+        if ($this->cache->has($class))
+        {
+            return $observer->handle($this);
+        }
+
+        return null;
     }
 
 

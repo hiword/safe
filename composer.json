@@ -9,9 +9,12 @@
         }
     ],
     "require": {
-        "mews/captcha": "~2.0"
+        "php": ">=7.0"
     },
     "autoload":{
+        "files":[
+          "src/helper.php"
+        ],
         "psr-4": {
             "Simon\\Safe\\": "src/"
         }
