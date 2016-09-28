@@ -53,12 +53,14 @@ class Container implements SubjectInterface
         {
             $cache = $this->cache->get($cacheName);
             $cache['frequency'] = $cache['frequency']+1;
+            $cache['time'] = time();
         }
         else
         {
             $cache = [
                 'frequency'=>1,
                 'ip'=>$this->ip,
+                'time'=>time(),
             ];
         }
 
