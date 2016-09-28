@@ -12,6 +12,6 @@ namespace Simon\Safe\Contracts;
 interface ObserverInterface
 {
 
-    public function handle(SubjectInterface $subject);
+    public function handle(array $data,SubjectInterface $subject);
 
 }

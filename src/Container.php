@@ -9,6 +9,8 @@
 namespace Simon\Safe;
 
 
+use Illuminate\Http\Request;
+use Illuminate\Queue\SerializesModels;
 use Simon\Safe\Contracts\ObserverInterface;
 use Simon\Safe\Contracts\SubjectInterface;
 use SplObserver;
@@ -17,68 +19,81 @@ use Illuminate\Contracts\Cache\Repository as Cache;
 class Container implements SubjectInterface
 {
 
-    protected $observers = [];
-
     protected $cache = null;
 
-    public function __construct(Cache $cache)
+    protected $request = null;
+
+    protected $ip = '';
+
+    public function __construct(Cache $cache,Request $request)
     {
         $this->cache = $cache;
+        $this->request = $request;
+        $this->ip = $request->ip();
     }
 
-    protected function getObserverClass(ObserverInterface $observer)
+    /**
+     * @param string $className
+     * @return string
+     */
+    protected function getCacheName(string $className)
     {
-        return get_class($observer);
+        return $className.'_'.$this->ip;
     }
 
-    //你可以一个一个传，我都会记下来，但当你成功后必须要手动detach
-    //notify是要有参数的，就是observer
-
-    public function attach(ObserverInterface $observer)
+    /**
+     * @param string $className
+     */
+    public function attach(string $className)
     {
         // TODO: Implement attach() method.
+        $cacheName = $this->getCacheName($className);
 
-        $class = $this->getObserverClass($observer);
-
-        if ($this->cache->has($class))
+        if ($this->cache->has($cacheName))
         {
-            $cache = $this->cache->get($class);
+            $cache = $this->cache->get($cacheName);
             $cache['frequency'] = $cache['frequency']+1;
         }
         else
         {
             $cache = [
                 'frequency'=>1,
-                'object'=>$observer,
+                'ip'=>$this->ip,
             ];
         }
 
-        $this->cache->forever($class,$cache);
+        $this->cache->forever($cacheName,$cache);
     }
 
-    public function detach(ObserverInterface $observer)
+    /**
+     * @param string $className
+     */
+    public function detach(string $className)
     {
         // TODO: Implement detach() method.
-        $class = $this->getObserverClass($observer);
+        $cacheName = $this->getCacheName($className);
 
-        if ($this->cache->has($class))
+        if ($this->cache->has($cacheName))
         {
-            $this->cache->forget($class);
+            $this->cache->forget($cacheName);
         }
     }
 
+    /**
+     * @param ObserverInterface $observer
+     * @return null
+     */
     public function notify(ObserverInterface $observer)
     {
         // TODO: Implement notify() method.
-        $class = $this->getObserverClass($observer);
+        $cacheName = $this->getCacheName(get_class($observer));
 
-        if ($this->cache->has($class))
+        if ($this->cache->has($cacheName))
         {
-            return $observer->handle($this);
+            return $observer->handle($this->cache->get($cacheName),$this);
         }
 
         return null;
     }
-
 
 }

@@ -12,9 +12,9 @@ namespace Simon\Safe\Contracts;
 interface SubjectInterface
 {
 
-    public function attach(ObserverInterface $observer);
+    public function attach(string $className);
 
-    public function detach(ObserverInterface $observer);
+    public function detach(string $className);
 
     public function notify(ObserverInterface $observer);
 

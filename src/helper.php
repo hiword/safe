@@ -1,15 +1,35 @@
 <?php
 if (!function_exists('safe'))
 {
-//    function safe(\Simon\Safe\Contracts\ObserverInterface $observer = null)
-//    {
-//        $container = app(\Simon\Safe\Contracts\SubjectInterface::class);
-//
-//        $container->attach
-
     function safe()
     {
-        return app(\Simon\Safe\Contracts\SubjectInterface::class);
+        return app('safe');
     }
+}
 
+if (!function_exists('safe_attach'))
+{
+
+    function attach(string $className)
+    {
+        return app('safe')->attach($className);
+    }
+}
+
+if (!function_exists('safe_detach'))
+{
+
+    function attach(string $className)
+    {
+        return app('safe')->detach($className);
+    }
+}
+
+if (!function_exists('safe_notify'))
+{
+
+    function attach(\Simon\Safe\Contracts\ObserverInterface $observer)
+    {
+        return app('safe')->notify($observer);
+    }
 }

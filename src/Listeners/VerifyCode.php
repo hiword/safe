@@ -8,6 +8,7 @@
  */
 namespace Simon\Safe\Listeners;
 
+use Illuminate\Http\Request;
 use Simon\Safe\Contracts\ObserverInterface;
 use Simon\Safe\Contracts\SubjectInterface;
 
@@ -15,22 +16,29 @@ class VerifyCode implements ObserverInterface
 {
     protected $request = null;
 
-    public function __construct(\Illuminate\Http\Request $request)
+    public function __construct()
     {
-        $this->request = $request;
+        $this->request = app('request');
     }
 
-    public function handle(SubjectInterface $subject)
+    public function handle(array $data,SubjectInterface $subject)
     {
         // TODO: Implement handle() method.
 
-        if ($this->request->method() === 'POST')
-        {
-            return 'POST';
+
+        var_dump($data);
+
+        if ($this->request->method() === 'POST') {
+
         }
         else
         {
-            return 'GET';
+            if ($data['frequency'] >= 6)
+            {
+                return true;
+            }
+
+            return false;
         }
 
     }
