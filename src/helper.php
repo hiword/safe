@@ -10,7 +10,7 @@ if (!function_exists('safe'))
 if (!function_exists('safe_attach'))
 {
 
-    function attach(string $className)
+    function safe_attach(string $className)
     {
         return app('safe')->attach($className);
     }
@@ -19,7 +19,7 @@ if (!function_exists('safe_attach'))
 if (!function_exists('safe_detach'))
 {
 
-    function attach(string $className)
+    function safe_detach(string $className)
     {
         return app('safe')->detach($className);
     }
@@ -28,7 +28,7 @@ if (!function_exists('safe_detach'))
 if (!function_exists('safe_notify'))
 {
 
-    function attach(\Simon\Safe\Contracts\ObserverInterface $observer)
+    function safe_notify(\Simon\Safe\Contracts\ObserverInterface $observer)
     {
         return app('safe')->notify($observer);
     }

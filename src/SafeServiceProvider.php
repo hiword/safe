@@ -10,7 +10,7 @@ namespace Simon\Safe;
 
 
 use Illuminate\Support\ServiceProvider;
-use Simon\Safe\Contracts\SubjectInterface;
+use Simon\Safe\Contracts\SafeSubjectInterface;
 
 class SafeServiceProvider extends ServiceProvider
 {
@@ -36,7 +36,7 @@ class SafeServiceProvider extends ServiceProvider
 //            new Container($this->app['cache'],$this->app['request']);
 //        });
 
-        $this->app->singleton([SubjectInterface::class=>'safe'],Container::class);
+        $this->app->singleton([SafeSubjectInterface::class=>'safe'],Container::class);
     }
 
     public function provides()
